@@ -4,4 +4,6 @@ import pandas as pd
 #read all the tables from the page and store the first one in df
 tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies#S&P_500_component_stocks')
 df = tables[0]
-print(df.columns)
+
+#testing shows it reads it correctly
+#print(df.columns)
