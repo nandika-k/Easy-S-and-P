@@ -11,5 +11,5 @@ df = tables[0]
 #store to csv file without indexing
 #df.to_csv('data/stocks.csv', index=False)
 
-def get_ticker():
+def get_tickers():
     return df['Symbol'].tolist()
