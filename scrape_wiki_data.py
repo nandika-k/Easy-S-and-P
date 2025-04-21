@@ -10,3 +10,6 @@ df = tables[0]
 
 #store to csv file without indexing
 #df.to_csv('data/stocks.csv', index=False)
+
+def get_ticker():
+    return df['Symbol'].tolist()
