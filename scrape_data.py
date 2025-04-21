@@ -7,3 +7,6 @@ df = tables[0]
 
 #testing shows it reads it correctly
 #print(df.columns)
+
+#store to csv file without indexing
+df.to_csv('data/stocks.csv', index=False)
