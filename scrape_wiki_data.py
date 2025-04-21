@@ -6,7 +6,7 @@ tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies
 df = tables[0]
 
 #testing shows it reads it correctly
-#print(df.columns)
+#print(df['Symbol'].tolist())
 
 #store to csv file without indexing
-df.to_csv('data/stocks.csv', index=False)
+#df.to_csv('data/stocks.csv', index=False)
