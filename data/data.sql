@@ -18,3 +18,5 @@ CREATE TABLE yfin_ticker_info (
     Recommendation_Score INT NOT NULL,
     PRIMARY KEY (Ticker)
 );
+
+select user, host from mysql.user;
