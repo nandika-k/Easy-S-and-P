@@ -13,3 +13,6 @@ df = tables[0]
 
 def get_tickers():
     return df['Symbol'].tolist()
+
+def get_details():
+    return df[['Symbol', 'GICS Sector', 'GICS Sub-Industry']].tolist()
