@@ -7,33 +7,10 @@ import certifi
 import json
 import ssl
 
-#Code from Financial Modeling Prep
-def get_jsonparsed_data(url):
-    context = ssl.create_default_context(cafile=certifi.where())
-
-    # Add User-Agent header to mimic a browser
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-    req = Request(url, headers=headers)
-
-    try:
-        response = urlopen(req, context=context)
-        data = response.read().decode("utf-8")
-    except HTTPError as e:
-        print(f"HTTP Error: {e.code} {e.reason}")
-    except URLError as e:
-        print(f"URL Error: {e.reason}")
-    except Exception as e:
-        print(f"General error: {e}")
-    return None
-
 if __name__ == "__main__":
-    #get data from Financial Modeling Prep and store into json_data
-    FMP_api_key = os.getenv("FMP_API_KEY")
-    url = ("https://financialmodelingprep.com/api/v3/sp500_constituent?apikey={FMP_api_key}}")
-    json_data = get_jsonparsed_data(url)
-
-    #Store the data as a data frame
-    df = pd.DataFrame(json_data)
+    #get data from wikipedia and store it into a df
+    tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies#S&P_500_component_stocks')
+    df = tables[0]
 
     # Create SQLAlchemy engine, get password from env var DB_PASSWORD
     password = os.getenv("DB_PASSWORD")
