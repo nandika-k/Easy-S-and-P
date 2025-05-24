@@ -1,24 +1,37 @@
+import os
 import pandas as pd
 from sqlalchemy import create_engine
-#had to download lxml module for read_html
+from urllib.request import urlopen
+import certifi
+import json
 
-#read all the tables from the page and store the first one in df
-tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies#S&P_500_component_stocks')
-df = tables[0]
+#Code from Financial Modeling Prep
+def get_jsonparsed_data(url):
+    response = urlopen(url, cafile=certifi.where())
+    data = response.read().decode("utf-8")
+    return json.loads(data)
 
-#testing shows it reads it correctly
-#print(df['Symbol'].tolist())
+if __name__ == "__main__":
+    #get data from Financial Modeling Prep and store into json_data
+    FMP_api_key = os.getenv("FMPI_API_KEY")
+    url = ("https://financialmodelingprep.com/api/v3/sp500_constituent?apikey={FMP_api_key}}")
+    json_data = get_jsonparsed_data(url)
 
-# Create SQLAlchemy engine
-engine = create_engine('mysql+mysqlconnector://root:Database23!@127.0.0.1/fin_data_project')
+    #Store the data as a data frame
+    df = pd.DataFrame(json_data)
 
-try:
-    df.to_sql('stocks', con=engine, if_exists='replace', index=False)
-    print("Data written successfully.")
-except Exception as e:
-    print(f"Error: {e}")
-finally:
-    engine.dispose()
+    # Create SQLAlchemy engine, get password from env var DB_PASSWORD
+    password = os.getenv("DB_PASSWORD")
+    engine = create_engine('mysql+mysqlconnector://root:{password}@127.0.0.1/easy_s_and_p')
+
+    try:
+        #load dataframe into an sql table called stocks
+        df.to_sql('stocks', con=engine, if_exists='replace', index=False)
+        print("Data written successfully.")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        engine.dispose()
 
 
 def update_stock_csv():
@@ -26,7 +39,9 @@ def update_stock_csv():
     df.to_csv('data/stocks.csv', index=False)
 
 def get_tickers():
+    #Returns a list of all the tickers stored
     return df['Symbol'].tolist()
 
 def get_details():
-    return df[['Symbol', 'GICS Sector', 'GICS Sub-Industry']].tolist()
+    #returns a list of lists for each row
+    return df[['Symbol', 'GICS Sector', 'GICS Sub-Industry']].values.tolist()
