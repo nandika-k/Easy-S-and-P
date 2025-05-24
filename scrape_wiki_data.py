@@ -13,7 +13,7 @@ def get_jsonparsed_data(url):
 
 if __name__ == "__main__":
     #get data from Financial Modeling Prep and store into json_data
-    FMP_api_key = os.getenv("FMPI_API_KEY")
+    FMP_api_key = os.getenv("FMP_API_KEY")
     url = ("https://financialmodelingprep.com/api/v3/sp500_constituent?apikey={FMP_api_key}}")
     json_data = get_jsonparsed_data(url)
 
