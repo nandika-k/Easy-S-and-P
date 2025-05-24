@@ -1,15 +1,30 @@
 import os
 import pandas as pd
 from sqlalchemy import create_engine
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
 import certifi
 import json
+import ssl
 
 #Code from Financial Modeling Prep
 def get_jsonparsed_data(url):
-    response = urlopen(url, cafile=certifi.where())
-    data = response.read().decode("utf-8")
-    return json.loads(data)
+    context = ssl.create_default_context(cafile=certifi.where())
+
+    # Add User-Agent header to mimic a browser
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+    req = Request(url, headers=headers)
+
+    try:
+        response = urlopen(req, context=context)
+        data = response.read().decode("utf-8")
+    except HTTPError as e:
+        print(f"HTTP Error: {e.code} {e.reason}")
+    except URLError as e:
+        print(f"URL Error: {e.reason}")
+    except Exception as e:
+        print(f"General error: {e}")
+    return None
 
 if __name__ == "__main__":
     #get data from Financial Modeling Prep and store into json_data
