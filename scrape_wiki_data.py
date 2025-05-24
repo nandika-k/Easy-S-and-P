@@ -1,11 +1,6 @@
 import os
 import pandas as pd
 from sqlalchemy import create_engine
-from urllib.request import urlopen, Request
-from urllib.error import HTTPError, URLError
-import certifi
-import json
-import ssl
 
 if __name__ == "__main__":
     #get data from wikipedia and store it into a df
@@ -14,7 +9,7 @@ if __name__ == "__main__":
 
     # Create SQLAlchemy engine, get password from env var DB_PASSWORD
     password = os.getenv("DB_PASSWORD")
-    engine = create_engine('mysql+mysqlconnector://root:{password}@127.0.0.1/easy_s_and_p')
+    engine = create_engine(f'mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p')
 
     try:
         #load dataframe into an sql table called stocks
