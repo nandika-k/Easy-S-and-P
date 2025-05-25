@@ -1,17 +1,19 @@
 import yfinance as yf
 from sqlalchemy import create_engine, Column, Integer, String, MetaData, Table
 from sqlalchemy.orm import declarative_base, sessionmaker
-import scrape_wiki_data
+import backend.scrape_wiki_data as scrape_wiki_data
 import pandas as pd
 import time
 import random
 import traceback
+import os
 
 
 cols = ['Ticker', 'Industry', 'Sub-Sector', 'Beta', 'Recommendation Score']
 data_lists = []
 
-engine = create_engine('mysql+mysqlconnector://root:Database23!@127.0.0.1/fin_data_project')
+password = os.getenv("DB_PASSWORD")
+engine = create_engine('mysql+mysqlconnector://root:{password}@127.0.0.1/easy_s_and_p')
 Base = declarative_base()
 
 Session = sessionmaker(bind=engine)
