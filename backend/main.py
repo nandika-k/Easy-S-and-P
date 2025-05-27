@@ -20,5 +20,5 @@ class WIKI_DATA(Base):
 class YAHOO_FIN_DATA(Base):
     __tablename__ = 'yfin_ticker_info'
     Ticker = Column(String(100), primary_key=True)
-    bBeta = Column(Float)
+    Beta = Column(Float)
     Recommendation_Score = Column(Integer, nullable=True)
