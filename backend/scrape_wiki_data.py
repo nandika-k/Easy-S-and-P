@@ -14,7 +14,17 @@ if __name__ == "__main__":
         "GICS Sub-Industry": "Sub_Industry",
         "Headquarters Location": "HQ_Location",
         "Date added": "Date_Added"
-    })
+    }, inplace=True)
+
+    #clean up data types for columns
+    str_cols = df.columns.drop("Date_Added", "CIK", "Founded")
+    for col in str_cols:
+        df[col] = df[col].astype(str)
+    
+    df["Date Added"] = pd.to_datetime(df['Date_Added'], errors='coerce')
+    df["CIK"] = pd.to_numeric(df['CIK'], errors='coerce').astype(int)
+    df['Year'] = pd.to_numeric(df['Year'], errors='coerce').astype(int)
+
 
     # Create SQLAlchemy engine, get password from env var DB_PASSWORD
     password = os.getenv("DB_PASSWORD")
