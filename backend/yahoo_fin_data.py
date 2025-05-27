@@ -1,5 +1,6 @@
 import yfinance as yf
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker, declarative_base
 import pandas as pd
 import time
 import random
@@ -9,6 +10,16 @@ import os
 
 password = os.getenv("DB_PASSWORD")
 engine = create_engine(f'mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p')
+
+
+Base = declarative_base()
+
+class YAHOO_FIN_DATA(Base):
+    __tablename__ = 'yfin_ticker_info'
+    ticker = Column(String(100), primary_key=True)
+    beta = Column(Float)
+    recommendation_score = Column(Integer, nullable=True)
+
 
 recommendation_score_map = {
     "Strong Buy": 4,
@@ -48,11 +59,11 @@ def fetch_data(ticker):
         else:
             recommendation_score = None
 
-        #return a list of the ticker, beta, and recommendation score
+        #return a dictionary of the ticker, beta, and recommendation score
         return {
-            "Ticker": ticker,
-            "Beta" : beta,
-            "Recommendation Score": recommendation_score
+            "ticker": ticker,
+            "beta" : beta,
+            "recommendation_score": recommendation_score
         }
     except:
         #if there is an error, provide the details
@@ -75,7 +86,7 @@ def main():
     iterate through tickers and fetch the data on all
     if data is found, append list to all_data
     '''
-    for ticker in tickers[0:5]:
+    for ticker in tickers[0:1]:
         data = fetch_data(ticker)
 
         if data:
@@ -83,11 +94,16 @@ def main():
             print("Fetched data for ticker", ticker)
 
     #load into pandas dataframe
-    df = pd.DataFrame(all_data)
+    df = pd.DataFrame(all_data, columns=["Ticker", "Beta", "Recommendation_Score"])
+
+    #clean up data types
+    df["Ticker"] = df["Ticker"].astype(str)
+    df["Beta"] = pd.to_numeric(df['Beta'], errors='coerce').astype(float)
+    df["Recommendation_Score"] = pd.to_numeric(df['Recommendation_Score'], errors='coerce').astype(int)
 
     try:
         #load dataframe into an sql table called y_fin_data
-        df.to_sql('y_fin_data', con=engine, if_exists='replace', index=False)
+        df.to_sql('y_fin_data', con=engine, if_exists='append', index=False)
         print("Data written successfully.")
     except Exception as e:
         print(f"Error: {e}")
