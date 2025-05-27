@@ -38,3 +38,9 @@ class WIKI_DATA(Base):
     date_added = Column(Date, nullable=True)
     cik = Column(Integer)
     date_founded = Column(Date, nullable=True)
+
+class YAHOO_FIN_DATA(Base):
+    __tablename__ = 'yfin_ticker_info'
+    ticker = Column(String(100), primary_key=True)
+    beta = Column(Integer)
+    recommendation_score = Column(Integer)
