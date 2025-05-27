@@ -20,8 +20,8 @@ recommendation_score_map = {
 
 def get_tickers():
     #read tickers from sql table created by scrape_wiki_data
-    df = pd.read_sql('SELECT Symbol FROM stocks', con=engine)
-    return df['Symbol'].to_list()
+    df = pd.read_sql('SELECT Ticker FROM stocks', con=engine)
+    return df['Ticker'].to_list()
 
 def fetch_data(ticker):
     #Clean up names for any tickers with dots
