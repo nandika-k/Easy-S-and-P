@@ -7,6 +7,15 @@ if __name__ == "__main__":
     tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies#S&P_500_component_stocks')
     df = tables[0]
 
+    #rename columns to match format
+    df.rename(columns={
+        "Symbol": "Ticker",
+        "GICS Sector": "Sector",
+        "GICS Sub-Industry": "Sub_Industry",
+        "Headquarters Location": "HQ_Location",
+        "Date added": "Date_Added"
+    })
+
     # Create SQLAlchemy engine, get password from env var DB_PASSWORD
     password = os.getenv("DB_PASSWORD")
     engine = create_engine(f'mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p')
