@@ -1,10 +1,38 @@
-from fastapi import FastAPI, HTTPException
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import sessionmaker, declarative_base
+from fastapi import FastAPI, HTTPException, Depends
+from sqlalchemy import create_engine, Column, Integer, String, Date, Float
+from sqlalchemy.orm import Session, sessionmaker, declarative_base
+from sqlalchemy.ext.declarative import declarative_base
+from typing import List, Optional
 import os
+
+#creating the engine
+password = os.getenv("DB_PASSWORD")
+DATABASE_URL = f"mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p"
+engine = create_engine(DATABASE_URL)
+
+#create session
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+#
+
+Base = declarative_base()
 
 #start FastAPI app
 app = FastAPI()
+
+#method to open session for each request
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+#method to get stocks. takes in sector filter (optional), sort_by which defaults to ticker, and database session from method above.
+def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", db: Session = Depends(get_db)):
+    #query 
+    query = db.query(WIKI_DATA)
+
 
 class WIKI_DATA(Base):
     __tablename__ = 's_and_p_stocks'
