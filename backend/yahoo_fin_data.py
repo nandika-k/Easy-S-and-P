@@ -1,24 +1,13 @@
 import yfinance as yf
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy.orm import declarative_base
 import pandas as pd
-import time
-import random
 import traceback
 import os
 
 
 password = os.getenv("DB_PASSWORD")
 engine = create_engine(f'mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p')
-
-
-Base = declarative_base()
-
-class YAHOO_FIN_DATA(Base):
-    __tablename__ = 'yfin_ticker_info'
-    ticker = Column(String(100), primary_key=True)
-    beta = Column(Float)
-    recommendation_score = Column(Integer, nullable=True)
 
 
 recommendation_score_map = {
@@ -61,9 +50,9 @@ def fetch_data(ticker):
 
         #return a dictionary of the ticker, beta, and recommendation score
         return {
-            "ticker": ticker,
-            "beta" : beta,
-            "recommendation_score": recommendation_score
+            "Ticker": ticker,
+            "Beta" : beta,
+            "Recommendation_Score": recommendation_score
         }
     except:
         #if there is an error, provide the details
@@ -99,7 +88,7 @@ def main():
     #clean up data types
     df["Ticker"] = df["Ticker"].astype(str)
     df["Beta"] = pd.to_numeric(df['Beta'], errors='coerce').astype(float)
-    df["Recommendation_Score"] = pd.to_numeric(df['Recommendation_Score'], errors='coerce').astype(int)
+    df["Recommendation_Score"] = pd.to_numeric(df['Recommendation_Score'], errors='coerce').fillna(0).astype(int)
 
     try:
         #load dataframe into an sql table called y_fin_data

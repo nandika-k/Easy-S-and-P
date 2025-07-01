@@ -16,12 +16,12 @@ if __name__ == "__main__":
         "Date added": "Date_Added"
     }, inplace=True)
 
-    #clean up data types for columns
-    str_cols = df.columns.drop("Date_Added", "CIK", "Founded")
+    #clean up data and data types for columns
+    str_cols = df.columns.difference(["Date_Added", "CIK", "Founded"])
     for col in str_cols:
         df[col] = df[col].astype(str)
     
-    df["Date Added"] = pd.to_datetime(df['Date_Added'], errors='coerce')
+    df["Date_Added"] = pd.to_datetime(df['Date_Added'], errors='coerce')
     df["CIK"] = pd.to_numeric(df['CIK'], errors='coerce').astype(int)
     df['Year'] = pd.to_numeric(df['Year'], errors='coerce').astype(int)
 
@@ -46,8 +46,8 @@ def update_stock_csv():
 
 def get_tickers():
     #Returns a list of all the tickers stored
-    return df['Symbol'].tolist()
+    return df['Ticker'].tolist()
 
 def get_details():
     #returns a list of lists for each row
-    return df[['Symbol', 'GICS Sector', 'GICS Sub-Industry']].values.tolist()
+    return df[['Ticker', 'Sector', 'Sub-Industry']].values.tolist()
