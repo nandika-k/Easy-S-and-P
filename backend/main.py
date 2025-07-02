@@ -12,9 +12,6 @@ engine = create_engine(DATABASE_URL)
 
 #create session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-#
-
 Base = declarative_base()
 
 #start FastAPI app
@@ -29,47 +26,46 @@ def get_db():
         db.close()
 
 #method to get stocks. takes in sector filter (optional), sort_by which defaults to ticker, and database session from method above.
+@app.get("/stocks")
 def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", db: Session = Depends(get_db)):
     #query the sql table
     query = db.query(WIKI_DATA)
     
     #filter by sector if needed
-    if sector is not None:
-        try: 
+    try: 
+        if sector is not None:
             query = query.filter(WIKI_DATA.Sector == sector)
 
-            '''
-            #TODO: Add this after populating YAHOO_FIN_DATA table
-            #join WIKI_DATA and YAHOO_FIN_DATA tables
-            query = query.join(YAHOO_FIN_DATA, WIKI_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
-            '''
-            #if the column doesn't exist, default to Ticker
-            sort_col = getattr(YAHOO_FIN_DATA, sort_by, "Ticker") or getattr(WIKI_DATA, sort_by, "Ticker")
-            #sort data in ascending order by chosen col
-            query = query.order_by(sort_col.asc())
+        #join WIKI_DATA and YAHOO_FIN_DATA tables
+        query = query.join(YAHOO_FIN_DATA, WIKI_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
+        
+        #if the column doesn't exist, default to Ticker
+        sort_col = getattr(YAHOO_FIN_DATA, sort_by, YAHOO_FIN_DATA.Ticker) or getattr(WIKI_DATA, sort_by, WIKI_DATA.Ticker)
+        #sort data in ascending order by chosen col
+        query = query.order_by(sort_col.asc())
             
-            #execute and return query
-            results = query.all()
+        #execute and return query
+        results = query.all()
         
         #exception if query goes wrong
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
         
-        #create list of dictionaries to store all returned rows
-        rows = []
-        for result in results:
-            rows.append(
-                {
-                    "Ticker": result.WIKI_DATA.Ticker,
-                    "Security": result.WIKI_DATA.Security,
-                    "Sector": result.WIKI_DATA.Sector,
-                    "Sub_Industry": result.WIKI_DATA.Sub_Industry,
-                    "Beta": result.YAHOO_FIN_DATA.Beta,
-                    "Recommendation_Score": result.YAHOO_FIN_DATA.Recommendation_Score
-                }
-            )
+    #create list of dictionaries to store all returned rows
+    rows = []
+    for result in results:
+        rows.append(
+            {
+                "Ticker": result.Ticker,
+                "Security": result.Security,
+                "Sector": result.Sector,
+                "Sub_Industry": result.Sub_Industry,
+                "Beta": result.Beta,
+                "Recommendation_Score": result.Recommendation_Score
+            }
+        )
         
-        return rows
+    return rows
 
 class WIKI_DATA(Base):
     __tablename__ = 's_and_p_stocks'
