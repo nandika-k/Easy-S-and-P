@@ -6,8 +6,8 @@
     <body>
         <h1>Easy S&P</h1>
 
-        <label for ="sectorSorting">Sector:</label>
-        <select id="sectorSorting">
+        <label for ="sectorFiltering">Sector:</label>
+        <select id="sectorFiltering">
             <!-- TODO: Explore ways to get these sectors from data itself instead of hard-coding -->
             <option value="">All</option>
             <option value="Communication Services">Communication Services</option>
@@ -23,5 +23,32 @@
             <option value="Materials">Materials</option>
             <option value="Utilities">Utilities</option>
         </select>
+
+        <label for="sorting">Sort by:</label>
+        <select id="sorting">
+            <option value="Ticker">Ticker</option>
+            <option value="Beta">Beta</option>
+            <option value="Recommendation_Score">Recommendation Score</option>
+        </select>
+
+        <button id="load">Load Stocks</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Security</th>
+                    <th>Sector</th>
+                    <th>Sub-Industry</th>
+                    <th>Beta</th>
+                    <th>Recommendation Score</th>
+                </tr>
+            </thead>
+            <tbody id="stocksTableBody">
+                <!-- Populated by script: main.js -->
+            </tbody>
+        </table>
+
+        <script src="main.js"></script>
     </body>
 </html>
