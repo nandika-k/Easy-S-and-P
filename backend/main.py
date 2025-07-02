@@ -30,9 +30,41 @@ def get_db():
 
 #method to get stocks. takes in sector filter (optional), sort_by which defaults to ticker, and database session from method above.
 def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", db: Session = Depends(get_db)):
-    #query 
+    #query the sql table
     query = db.query(WIKI_DATA)
+    
+    #filter by sector if needed
+    if sector is not None:
+        query = query.filter(WIKI_DATA.Sector == sector)
 
+        '''
+        #TODO: Add this after populating YAHOO_FIN_DATA table
+        #join WIKI_DATA and YAHOO_FIN_DATA tables
+        query = query.join(YAHOO_FIN_DATA, WIKI_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
+        '''
+        #if the column doesn't exist, default to Ticker
+        sort_col = getattr(YAHOO_FIN_DATA, sort_by, "Ticker") or getattr(WIKI_DATA, sort_by, "Ticker")
+        #sort data in ascending order by chosen col
+        query = query.order_by(sort_col.asc())
+        
+        #execute and return query
+        results = query.all()
+
+        #create list of dictionaries to store all returned rows
+        rows = []
+        for result in results:
+            rows.append(
+                {
+                    "Ticker": result.WIKI_DATA.Ticker,
+                    "Security": result.WIKI_DATA.Security,
+                    "Sector": result.WIKI_DATA.Sector,
+                    "Sub_Industry": result.WIKI_DATA.Sub_Industry,
+                    "Beta": result.YAHOO_FIN_DATA.Beta,
+                    "Recommendation_Score": result.YAHOO_FIN_DATA.Recommendation_Score
+                }
+            )
+        
+        return rows
 
 class WIKI_DATA(Base):
     __tablename__ = 's_and_p_stocks'
