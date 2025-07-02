@@ -35,21 +35,26 @@ def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", 
     
     #filter by sector if needed
     if sector is not None:
-        query = query.filter(WIKI_DATA.Sector == sector)
+        try: 
+            query = query.filter(WIKI_DATA.Sector == sector)
 
-        '''
-        #TODO: Add this after populating YAHOO_FIN_DATA table
-        #join WIKI_DATA and YAHOO_FIN_DATA tables
-        query = query.join(YAHOO_FIN_DATA, WIKI_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
-        '''
-        #if the column doesn't exist, default to Ticker
-        sort_col = getattr(YAHOO_FIN_DATA, sort_by, "Ticker") or getattr(WIKI_DATA, sort_by, "Ticker")
-        #sort data in ascending order by chosen col
-        query = query.order_by(sort_col.asc())
+            '''
+            #TODO: Add this after populating YAHOO_FIN_DATA table
+            #join WIKI_DATA and YAHOO_FIN_DATA tables
+            query = query.join(YAHOO_FIN_DATA, WIKI_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
+            '''
+            #if the column doesn't exist, default to Ticker
+            sort_col = getattr(YAHOO_FIN_DATA, sort_by, "Ticker") or getattr(WIKI_DATA, sort_by, "Ticker")
+            #sort data in ascending order by chosen col
+            query = query.order_by(sort_col.asc())
+            
+            #execute and return query
+            results = query.all()
         
-        #execute and return query
-        results = query.all()
-
+        #exception if query goes wrong
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
         #create list of dictionaries to store all returned rows
         rows = []
         for result in results:
