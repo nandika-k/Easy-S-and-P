@@ -43,6 +43,34 @@ function loadStocks() {
     //if there's an error with getting the data or rendering the table, handle it
     .catch(error => {
         console.error("Error!", error);
-        tableBody.innerHTML = "<tr>Error loading stocks.<\tr>"
+        tableBody.innerHTML = "<tr><td>Error loading stocks.<\td><\tr>"
+    });
+}
+
+function renderTable (stocks) {
+    //start table body fresh
+    tableBody.innerHTML = ""
+
+    //if no stocks match the criteria, indicate that
+    if (stocks.length === 0) {
+        tableBody.innerHTML = "<tr><td>No matching stocks.<\td><\tr>"
+        return;
+    }
+
+    //if there are stocks found, display their data
+    stocks.forEach(stock => {
+        const row = document.createElement("tr");
+
+        //put relevant information into a row, default to N/A
+        row.innerHTML = `
+            <td>${stock.Ticker}<\td>
+            <td>${stock.Security}<\td>
+            <td>${stock.Sector}<\td>
+            <td>${stock.Sub_Industry}<\td>
+            <td>${stock.Beta ?? "N/A"}<\td>
+            <td>${stock.Recommendation_Score ?? "N/A"}<\td>
+        `;
+        //add row to table
+        tableBody.appendChild(row);
     });
 }
