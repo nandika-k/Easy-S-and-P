@@ -6,8 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 import os
 
-
-
 #creating the engine
 password = os.getenv("DB_PASSWORD")
 DATABASE_URL = f"mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p"
