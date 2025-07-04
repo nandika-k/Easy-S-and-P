@@ -7,3 +7,6 @@ Easy S&P is a stock screener that allows user to filter stocks by sector and sor
   - Store data in an Amazon S3 bucket
   - Update code to fetch data from the S3 bucket
   - Implement news sentiment analysis using AWS SageMaker
+
+### Demo
+![Project Demo](description/easy_s_and_p.gif)
