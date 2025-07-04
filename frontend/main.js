@@ -17,11 +17,11 @@ function loadStocks() {
     const sortBy = sortSelect.value;
     
     //check for sector filtering and add
-    if (sectorSelect) {
+    if (sector) {
         params.push(`sector=${encodeURIComponent(sector)}`);
     }
     //check for sorting and add
-    if (sortSelect) {
+    if (sortBy) {
         params.push(`sort_by=${encodeURIComponent(sortBy)}`);
     }
 
@@ -29,6 +29,9 @@ function loadStocks() {
     if (params.length > 0) {
         url += "?" + params.join("&");    
     }
+
+    //DEBUGGING
+    console.log(url)
 
     //get the table data and load it
     fetch(url)
