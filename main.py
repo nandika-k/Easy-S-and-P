@@ -29,7 +29,7 @@ def get_db():
 @app.get("/stocks")
 def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", db: Session = Depends(get_db)):
     #query the sql table
-    query = db.query(WIKI_DATA)
+    query = db.query(WIKI_DATA, YAHOO_FIN_DATA)
     
     #filter by sector if needed
     try: 
@@ -53,22 +53,22 @@ def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", 
         
     #create list of dictionaries to store all returned rows
     rows = []
-    for result in results:
+    for wiki, yahoo in results:
         rows.append(
             {
-                "Ticker": result.Ticker,
-                "Security": result.Security,
-                "Sector": result.Sector,
-                "Sub_Industry": result.Sub_Industry,
-                "Beta": result.Beta,
-                "Recommendation_Score": result.Recommendation_Score
+                "Ticker": wiki.Ticker,
+                "Security": wiki.Security,
+                "Sector": wiki.Sector,
+                "Sub_Industry": wiki.Sub_Industry,
+                "Beta": yahoo.Beta,
+                "Recommendation_Score": yahoo.Recommendation_Score
             }
         )
         
     return rows
 
 class WIKI_DATA(Base):
-    __tablename__ = 'stocks'
+    __tablename__ = 'wiki_data'
     Ticker = Column(String(100), primary_key=True)
     Security = Column(String(255), nullable=True)
     Sector = Column(String(100), nullable=True)
@@ -79,7 +79,7 @@ class WIKI_DATA(Base):
     Founded = Column(Date, nullable=True)
 
 class YAHOO_FIN_DATA(Base):
-    __tablename__ = 'stocks'
+    __tablename__ = 'yahoo_fin_data'
     Ticker = Column(String(100), primary_key=True)
     Beta = Column(Float)
     Recommendation_Score = Column(Integer, nullable=True)
