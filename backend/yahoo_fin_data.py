@@ -1,6 +1,5 @@
 import yfinance as yf
-from sqlalchemy import create_engine, Column, Integer, String, Float
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import create_engine
 import pandas as pd
 import traceback
 import os
@@ -9,18 +8,9 @@ import os
 password = os.getenv("DB_PASSWORD")
 engine = create_engine(f'mysql+mysqlconnector://root:{password}@localhost/easy_s_and_p')
 
-
-recommendation_score_map = {
-    "Strong Buy": 4,
-    "Buy": 2,
-    "Hold": 1,
-    "Sell": -2,
-    "Strong Sell": -4
-}
-
 def get_tickers():
     #read tickers from sql table created by scrape_wiki_data
-    df = pd.read_sql('SELECT Ticker FROM stocks', con=engine)
+    df = pd.read_sql('SELECT Ticker FROM WIKI_DATA', con=engine)
     return df['Ticker'].to_list()
 
 def fetch_data(ticker):
@@ -38,13 +28,27 @@ def fetch_data(ticker):
 
         #get recommendations
         recommendations = tkr.recommendations;
+        
             
         #compute recommendation score based on analyst recommendations
         if recommendations is not None and not recommendations.empty:
             latest = recommendations.iloc[-1]
-            grade = latest.get('To Grade', None)
-            recommendation_score = recommendation_score_map.get(grade, 0)
-            print(recommendations)
+
+            strong_buy = latest.get("strongBuy", 0)
+            buy = latest.get("buy", 0)
+            hold = latest.get("hold", 0)
+            sell = latest.get("sell", 0)
+            strong_sell = latest.get("strongSell", 0)
+
+
+            recommendation_score = (
+                2 * strong_buy +
+                1 * buy +
+                0 * hold -
+                1 * sell -
+                2 * strong_sell
+            )
+
         else:
             recommendation_score = None
 
@@ -75,7 +79,7 @@ def main():
     iterate through tickers and fetch the data on all
     if data is found, append list to all_data
     '''
-    for ticker in tickers[0:1]:
+    for ticker in tickers[0:503]:
         data = fetch_data(ticker)
 
         if data:
@@ -92,7 +96,7 @@ def main():
 
     try:
         #load dataframe into an sql table called y_fin_data
-        df.to_sql('y_fin_data', con=engine, if_exists='append', index=False)
+        df.to_sql('yahoo_fin_data', con=engine, if_exists='append', index=False)
         print("Data written successfully.")
     except Exception as e:
         print(f"Error: {e}")
