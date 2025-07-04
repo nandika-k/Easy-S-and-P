@@ -2,8 +2,11 @@ from fastapi import FastAPI, HTTPException, Depends
 from sqlalchemy import create_engine, Column, Integer, String, Date, Float
 from sqlalchemy.orm import Session, sessionmaker, declarative_base
 from sqlalchemy.ext.declarative import declarative_base
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 import os
+
+
 
 #creating the engine
 password = os.getenv("DB_PASSWORD")
@@ -16,6 +19,21 @@ Base = declarative_base()
 
 #start FastAPI app
 app = FastAPI()
+
+
+# Add this CORS setup before your routes
+origins = [
+    "http://localhost:8080",  # your frontend origin
+    # add other origins if needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # or ["*"] to allow all origins (not recommended for prod)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 #method to open session for each request
 def get_db():

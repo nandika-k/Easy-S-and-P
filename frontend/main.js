@@ -5,11 +5,16 @@ const loadButton = document.getElementById("load");
 const tableBody = document.getElementById("stocksTableBody");
 
 function loadStocks() {
+    //DEBUGGING
+    console.log("Loading stocks...");
+
     //build url - local for now
-    let url = "http://localhost:3306/easy_s_and_p";
+    let url = "http://localhost:8000/stocks";
 
     //store parameters relating to stocks to display in this list
     const params = [];
+    const sector = sectorSelect.value;
+    const sortBy = sortSelect.value;
     
     //check for sector filtering and add
     if (sectorSelect) {
@@ -17,7 +22,7 @@ function loadStocks() {
     }
     //check for sorting and add
     if (sortSelect) {
-        params.push(`sort_by=${encodeURIComponent(sort_by)}`);
+        params.push(`sort_by=${encodeURIComponent(sortBy)}`);
     }
 
     //if parameters exist, add to url
@@ -38,22 +43,27 @@ function loadStocks() {
     })
     //then, use the response data here to render the table
     .then(data => {
+        //DEBUGGING
+        console.log("Received data.")
         renderTable(data);
     })
     //if there's an error with getting the data or rendering the table, handle it
     .catch(error => {
         console.error("Error!", error);
-        tableBody.innerHTML = "<tr><td>Error loading stocks.<\td><\tr>"
+        tableBody.innerHTML = "<tr><td>Error loading stocks.</td></tr>"
     });
 }
 
 function renderTable (stocks) {
+    //DEBUGGING
+    console.log("Rendering table.")
+    
     //start table body fresh
     tableBody.innerHTML = ""
 
     //if no stocks match the criteria, indicate that
     if (stocks.length === 0) {
-        tableBody.innerHTML = "<tr><td>No matching stocks.<\td><\tr>"
+        tableBody.innerHTML = "<tr><td>No matching stocks.</td></tr>"
         return;
     }
 
@@ -63,12 +73,12 @@ function renderTable (stocks) {
 
         //put relevant information into a row, default to N/A
         row.innerHTML = `
-            <td>${stock.Ticker}<\td>
-            <td>${stock.Security}<\td>
-            <td>${stock.Sector}<\td>
-            <td>${stock.Sub_Industry}<\td>
-            <td>${stock.Beta ?? "N/A"}<\td>
-            <td>${stock.Recommendation_Score ?? "N/A"}<\td>
+            <td>${stock.Ticker}</td>
+            <td>${stock.Security}</td>
+            <td>${stock.Sector}</td>
+            <td>${stock.Sub_Industry}</td>
+            <td>${stock.Beta ?? "N/A"}</td>
+            <td>${stock.Recommendation_Score ?? "N/A"}</td>
         `;
         //add row to table
         tableBody.appendChild(row);
