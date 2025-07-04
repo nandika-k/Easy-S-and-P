@@ -1,5 +1,6 @@
 import yfinance as yf
 from sqlalchemy import create_engine
+import numpy as np
 import pandas as pd
 import traceback
 import os
@@ -12,6 +13,34 @@ def get_tickers():
     #read tickers from sql table created by scrape_wiki_data
     df = pd.read_sql('SELECT Ticker FROM WIKI_DATA', con=engine)
     return df['Ticker'].to_list()
+
+def calc_rec_score(recommendations):
+    latest = recommendations.iloc[-1]
+
+    strong_buy = latest.get("strongBuy", 0)
+    buy = latest.get("buy", 0)
+    hold = latest.get("hold", 0)
+    sell = latest.get("sell", 0)
+    strong_sell = latest.get("strongSell", 0)
+
+    total_analysts = strong_buy + buy + hold + sell + strong_sell;
+
+    recommendation_score = (
+        2 * strong_buy
+        + 1 * buy
+        + 0 * hold
+        - 1 * sell
+        - 2 * strong_sell
+    ) / total_analysts
+
+    #log ensures more popular companies aren't unfairly given high scores
+    #dividing by 3 ensures the confidence level isn't too high for a few number
+    #of analysts
+    confidence = min(1, np.log1p(total_analysts) / 3)
+
+    score = confidence * recommendation_score * 100
+    print(score)
+    return score
 
 def fetch_data(ticker):
     #Clean up names for any tickers with dots
@@ -28,27 +57,10 @@ def fetch_data(ticker):
 
         #get recommendations
         recommendations = tkr.recommendations;
-        
             
         #compute recommendation score based on analyst recommendations
         if recommendations is not None and not recommendations.empty:
-            latest = recommendations.iloc[-1]
-
-            strong_buy = latest.get("strongBuy", 0)
-            buy = latest.get("buy", 0)
-            hold = latest.get("hold", 0)
-            sell = latest.get("sell", 0)
-            strong_sell = latest.get("strongSell", 0)
-
-
-            recommendation_score = (
-                2 * strong_buy +
-                1 * buy +
-                0 * hold -
-                1 * sell -
-                2 * strong_sell
-            )
-
+            recommendation_score = calc_rec_score(recommendations)
         else:
             recommendation_score = None
 
