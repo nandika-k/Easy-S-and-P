@@ -37,7 +37,7 @@ def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", 
             query = query.filter(WIKI_DATA.Sector == sector)
 
         #join WIKI_DATA and YAHOO_FIN_DATA tables
-        query = query.join(YAHOO_FIN_DATA, WIKI_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
+        query = query.join(YAHOO_FIN_DATA, YAHOO_FIN_DATA.Ticker == WIKI_DATA.Ticker)
         
         #if the column doesn't exist, default to Ticker
         sort_col = getattr(YAHOO_FIN_DATA, sort_by, YAHOO_FIN_DATA.Ticker) or getattr(WIKI_DATA, sort_by, WIKI_DATA.Ticker)
@@ -68,7 +68,7 @@ def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", 
     return rows
 
 class WIKI_DATA(Base):
-    __tablename__ = 's_and_p_stocks'
+    __tablename__ = 'stocks'
     Ticker = Column(String(100), primary_key=True)
     Security = Column(String(255), nullable=True)
     Sector = Column(String(100), nullable=True)
@@ -79,7 +79,7 @@ class WIKI_DATA(Base):
     Founded = Column(Date, nullable=True)
 
 class YAHOO_FIN_DATA(Base):
-    __tablename__ = 'yfin_ticker_info'
+    __tablename__ = 'stocks'
     Ticker = Column(String(100), primary_key=True)
     Beta = Column(Float)
     Recommendation_Score = Column(Integer, nullable=True)
