@@ -4,7 +4,7 @@ const sortSelect = document.getElementById("sorting");
 const loadButton = document.getElementById("load");
 const tableBody = document.getElementById("stocksTableBody");
 
-function load_stocks() {
+function loadStocks() {
     //build url - local for now
     let url = "http://localhost:3306/easy_s_and_p";
 
