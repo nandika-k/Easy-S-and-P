@@ -57,8 +57,12 @@ def get_stocks(sector: Optional[str] = None, sort_by: Optional[str] = "Ticker", 
         
         #if the column doesn't exist, default to Ticker
         sort_col = getattr(YAHOO_FIN_DATA, sort_by, YAHOO_FIN_DATA.Ticker) or getattr(WIKI_DATA, sort_by, WIKI_DATA.Ticker)
-        #sort data in ascending order by chosen col
-        query = query.order_by(sort_col.asc())
+        
+        if sort_by != "Ticker":
+            query = query.order_by(sort_col.desc())
+        else: 
+            #sort data in ascending order by chosen col
+            query = query.order_by(sort_col.asc())
             
         #execute and return query
         results = query.all()

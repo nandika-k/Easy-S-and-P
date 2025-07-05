@@ -87,3 +87,7 @@ function renderTable (stocks) {
         tableBody.appendChild(row);
     });
 }
+
+function sortTable(col) {
+    
+}
