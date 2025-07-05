@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Easy S&P</title>
+        <link rel="stylesheet" href="stylesheet.css">
     </head>
     <body>
         <h1>Easy S&P</h1>
@@ -19,7 +20,7 @@
             <option value="Industrials">Industrials</option>
             <option value="Information Technology">Information Technology</option>
             <option value="Materials">Materials</option>
-            <option value="	Real Estate">Real Estate</option>
+            <!-- <option value="	Real Estate">Real Estate</option> -->
             <option value="Materials">Materials</option>
             <option value="Utilities">Utilities</option>
         </select>
@@ -27,12 +28,15 @@
         <label for="sorting">Sort by:</label>
         <select id="sorting">
             <option value="Ticker">Ticker</option>
+            <option value="Security">Security</option>
+            <option value="Sector">Sector</option>
+            <option value="Sub_Industry">Sub-Industry</option>
             <option value="Beta">Beta</option>
             <option value="Recommendation_Score">Recommendation Score</option>
         </select>
 
         <button id="load" onclick="loadStocks()">Load Stocks</button>
-
+        <br><br>
         <table>
             <thead>
                 <tr>

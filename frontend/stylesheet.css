@@ -1,0 +1,11 @@
+
+/* table border */
+th, td {
+    padding: 3px;
+    border-bottom: 1px solid #a2c7b0;
+}
+th {
+    background-color:rgb(53, 133, 102)
+}
+/* highlight row */
+tr:hover {background-color: rgba(0, 130, 24, 0.634);}
