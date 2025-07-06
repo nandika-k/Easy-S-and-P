@@ -1,12 +1,12 @@
 ## Easy S&P
 Easy S&P is a stock screener that allows user to filter stocks by sector and sort them by key metrics. Future updates will include availability online tools like a news sentiment analyzer built using AWS Sagemaker.
 
+### Tech Stack
+Python, MySQL, JavaScript, HTML, FastAPI, CSS
+
 ### Next Steps
-- Build CSS style guide
-- Deploy the app online
-  - Store data in an Amazon S3 bucket
-  - Update code to fetch data from the S3 bucket
-  - Implement news sentiment analysis using AWS SageMaker
+- Deploy the app online with AWS tools
+- Implement news sentiment analysis using AWS SageMaker
 
 ### Demo
 ![Project Demo](description/easy_s_and_p.gif)
